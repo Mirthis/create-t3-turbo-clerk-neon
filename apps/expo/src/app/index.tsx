@@ -99,6 +99,8 @@ export default function Index() {
 
   const postQuery = api.post.all.useQuery();
 
+  console.log({data: postQuery.data})
+
   const deletePostMutation = api.post.delete.useMutation({
     onSettled: () => utils.post.all.invalidate().then(),
   });
