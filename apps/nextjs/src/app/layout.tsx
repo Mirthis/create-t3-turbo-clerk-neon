@@ -10,6 +10,7 @@ import { env } from "~/env";
 import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/app/globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -41,6 +42,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
+    <ClerkProvider  >
+
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
@@ -58,5 +61,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         </ThemeProvider>
       </body>
     </html>
+    </ClerkProvider>
+
   );
 }

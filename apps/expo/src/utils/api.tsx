@@ -6,6 +6,7 @@ import { createTRPCReact } from "@trpc/react-query";
 import superjson from "superjson";
 
 import type { AppRouter } from "@acme/api";
+import { useAuth } from "@clerk/clerk-expo";
 
 /**
  * A set of typesafe hooks for consuming your API.
@@ -43,6 +44,7 @@ const getBaseUrl = () => {
  * Use only in _app.tsx
  */
 export function TRPCProvider(props: { children: React.ReactNode }) {
+  const { getToken } = useAuth();
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
     api.createClient({
@@ -56,8 +58,13 @@ export function TRPCProvider(props: { children: React.ReactNode }) {
         httpBatchLink({
           transformer: superjson,
           url: `${getBaseUrl()}/api/trpc`,
-          headers() {
+          async headers() {
             const headers = new Map<string, string>();
+
+            const authToken = await getToken();
+            if (authToken) {
+              headers.set("Authorization", authToken);
+            }
             headers.set("x-trpc-source", "expo-react");
             return Object.fromEntries(headers);
           },

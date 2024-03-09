@@ -39,4 +39,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     typedRoutes: true,
   },
   plugins: ["expo-router"],
+  extra: {
+    clerkPublishableKey: "pk_test_d2VsY29tZS1iYWRnZXItMjEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+  }
 });

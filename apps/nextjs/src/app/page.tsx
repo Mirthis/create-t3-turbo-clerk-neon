@@ -6,6 +6,7 @@ import {
   PostCardSkeleton,
   PostList,
 } from "./_components/posts";
+import { SignOutButton, SignedIn, SignedOut } from "@clerk/nextjs";
 
 // export const runtime = "edge";
 
@@ -19,6 +20,14 @@ export default async function HomePage() {
         <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
           Create <span className="text-primary">T3</span> Turbo
         </h1>
+
+        <SignedIn>
+          <p>Welcome back!</p>
+          <SignOutButton />
+        </SignedIn>
+        <SignedOut>
+          <p>You are not signed in</p>
+        </SignedOut>
 
         <CreatePostForm />
         <div className="w-full max-w-2xl overflow-y-scroll">

@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Button, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, Stack } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
 
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
+import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-expo";
+import SignInScreen from "~/components/SignInScreen";
+
 
 function PostCard(props: {
   post: RouterOutputs["post"]["all"][number];
@@ -48,6 +51,9 @@ function CreatePost() {
       setContent("");
       await utils.post.all.invalidate();
     },
+    onError(err) {
+      console.error(err);
+    }
   });
 
   return (
@@ -94,6 +100,24 @@ function CreatePost() {
   );
 }
 
+const SignOut = () => {
+  const { isLoaded,signOut } = useAuth();
+  if (!isLoaded) {
+    return null;
+  }
+  return (
+    <View>
+      <Button
+        title="Sign Out"
+        onPress={async () => {
+          await signOut();
+        }}
+      />
+    </View>
+  );
+};
+ 
+
 export default function Index() {
   const utils = api.useUtils();
 
@@ -107,6 +131,17 @@ export default function Index() {
 
   return (
     <SafeAreaView className=" bg-background">
+        <SignedIn>
+          <Text>You are Signed in</Text>
+          <SignOut />
+        </SignedIn>
+        <SignedOut>
+          <View>
+            <Text>You are Signed out</Text>
+            <SignInScreen />
+          </View>
+        </SignedOut>
+
       {/* Changes page title visible on the header */}
       <Stack.Screen options={{ title: "Home Page" }} />
       <View className="h-full w-full bg-background p-4">

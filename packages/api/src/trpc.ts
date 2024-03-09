@@ -6,11 +6,12 @@
  * tl;dr - this is where all the tRPC server stuff is created and plugged in.
  * The pieces you will need to use are documented accordingly near the end
  */
-import { initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "@acme/db";
+import { currentUser } from "@clerk/nextjs";
 
 /**
  * 1. CONTEXT
@@ -89,9 +90,22 @@ export const publicProcedure = t.procedure;
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
+export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
+  console.log("TRPC Protected: ");
+  const user = await currentUser();
+  if(!user) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You must be logged in to access this resource",
+    });
+  }
+else {
+    console.log("user Id:", user.id);
+  }
   return next({
-      // infers the `session` as non-nullable
+      ctx: {
+        user: user,
+      },
     },
   )
 });
