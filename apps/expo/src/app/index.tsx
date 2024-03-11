@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { Button, Pressable, Text, TextInput, View } from "react-native";
+import { Alert, Button, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, Stack } from "expo-router";
+import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-expo";
 import { FlashList } from "@shopify/flash-list";
 
 import type { RouterOutputs } from "~/utils/api";
-import { api } from "~/utils/api";
-import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-expo";
 import SignInScreen from "~/components/SignInScreen";
-
+import { api } from "~/utils/api";
 
 function PostCard(props: {
   post: RouterOutputs["post"]["all"][number];
@@ -52,8 +51,9 @@ function CreatePost() {
       await utils.post.all.invalidate();
     },
     onError(err) {
+      Alert.alert("Failed to create post", err.message);
       console.error(err);
-    }
+    },
   });
 
   return (
@@ -101,7 +101,7 @@ function CreatePost() {
 }
 
 const SignOut = () => {
-  const { isLoaded,signOut } = useAuth();
+  const { isLoaded, signOut } = useAuth();
   if (!isLoaded) {
     return null;
   }
@@ -116,14 +116,13 @@ const SignOut = () => {
     </View>
   );
 };
- 
 
 export default function Index() {
   const utils = api.useUtils();
 
   const postQuery = api.post.all.useQuery();
 
-  console.log({data: postQuery.data})
+  console.log({ data: postQuery.data });
 
   const deletePostMutation = api.post.delete.useMutation({
     onSettled: () => utils.post.all.invalidate().then(),
@@ -131,16 +130,16 @@ export default function Index() {
 
   return (
     <SafeAreaView className=" bg-background">
-        <SignedIn>
-          <Text>You are Signed in</Text>
-          <SignOut />
-        </SignedIn>
-        <SignedOut>
-          <View>
-            <Text>You are Signed out</Text>
-            <SignInScreen />
-          </View>
-        </SignedOut>
+      <SignedIn>
+        <Text>You are Signed in</Text>
+        <SignOut />
+      </SignedIn>
+      <SignedOut>
+        <View>
+          <Text>You are Signed out</Text>
+          <SignInScreen />
+        </View>
+      </SignedOut>
 
       {/* Changes page title visible on the header */}
       <Stack.Screen options={{ title: "Home Page" }} />

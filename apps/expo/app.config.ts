@@ -40,6 +40,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: ["expo-router"],
   extra: {
-    clerkPublishableKey: "pk_test_d2VsY29tZS1iYWRnZXItMjEuY2xlcmsuYWNjb3VudHMuZGV2JA"
-  }
+    clerkPublishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+  },
 });

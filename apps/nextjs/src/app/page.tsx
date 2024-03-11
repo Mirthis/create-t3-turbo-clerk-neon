@@ -1,4 +1,11 @@
 import { Suspense } from "react";
+import {
+  SignedIn,
+  SignedOut,
+  SignIn,
+  SignOutButton,
+  UserButton,
+} from "@clerk/nextjs";
 
 import { api } from "~/trpc/server";
 import {
@@ -6,7 +13,6 @@ import {
   PostCardSkeleton,
   PostList,
 } from "./_components/posts";
-import { SignOutButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 // export const runtime = "edge";
 
@@ -20,15 +26,16 @@ export default async function HomePage() {
         <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
           Create <span className="text-primary">T3</span> Turbo
         </h1>
-        <div className="h-20 w-full bg-white">
-        <UserButton />
-        </div>
+
         <SignedIn>
-          <p>Welcome back!</p>
-          <SignOutButton />
+          <div className="flex items-center gap-4">
+            <p>You are signed in</p>
+            <UserButton />
+          </div>
         </SignedIn>
         <SignedOut>
           <p>You are not signed in</p>
+          <SignIn />
         </SignedOut>
 
         <CreatePostForm />

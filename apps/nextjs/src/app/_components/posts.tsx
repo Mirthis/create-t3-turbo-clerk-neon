@@ -35,6 +35,7 @@ export function CreatePostForm() {
       await utils.post.invalidate();
     },
     onError: (err) => {
+      console.log(err);
       toast.error(
         err?.data?.code === "UNAUTHORIZED"
           ? "You must be logged in to post"
