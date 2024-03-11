@@ -2,7 +2,7 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
 import { appRouter, createTRPCContext } from "@acme/api";
 
-// export const runtime = "edge";
+export const runtime = "edge";
 
 /**
  * Configure basic CORS headers
@@ -23,7 +23,7 @@ export const OPTIONS = () => {
   return response;
 };
 
-const handler = async (req:Request) => {
+const handler = async (req: Request) => {
   const response = await fetchRequestHandler({
     endpoint: "/api/trpc",
     router: appRouter,

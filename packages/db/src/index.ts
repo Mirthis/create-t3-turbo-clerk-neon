@@ -1,17 +1,21 @@
-import postgres from "postgres";
+// Neon DB
+import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
+
+// Standard Postgres (i.e.: local development)
+// import { drizzle } from "drizzle-orm/postgres-js";
+// import postgres from "postgres";
 
 import * as post from "./schema/post";
-import { drizzle } from "drizzle-orm/postgres-js";
 
+export const schema = { ...post };
 
-const queryClient = postgres(process.env.DATABASE_URL!);
+// Neon DB
+export const db = drizzle(neon(process.env.DATABASE_URL!), { schema });
 
-export const schema = {  ...post };
-
-export const db = drizzle(queryClient, { schema });
-
+// Standard Postgres (i.e.: local development)
+// export const db = drizzle(postgres(process.env.DATABASE_URL!), { schema });
 
 export { pgTable as tableCreator } from "./schema/_table";
 
 export * from "drizzle-orm";
-

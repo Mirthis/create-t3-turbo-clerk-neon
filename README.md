@@ -1,34 +1,43 @@
 # create-t3-turbo-clerk-neon
 
-This is based on [create-t3-turbo](https://github.com/t3-oss/create-t3-turbo) and include the following changes:
+Starter turborepo based on [create-t3-turbo](https://github.com/t3-oss/create-t3-turbo) using [Clerk](https://clerk.com/) for authentication and [Neon](https://neon.tech/) as serverless database.
+
+Following changes have been made:
 
 - add [Clerk](https://clerk.com/) as authentication provided for both nexxt and expo app
-- Updatge db schema and setup to use [Noen](https://neon.tech/) instead of [PlanetScale](https://planetscale.com/).
+- Update database package to use [Neon](https://neon.tech/) instead of [PlanetScale](https://planetscale.com/).
 - remove the auth proxy app
-- remove the auth packaged 
+- remove the auth package (no longer needed as replaced with Clerk)
 
 ## Know issues
 
-- **Unauthorized error not working as expected on the Expo App.**  
-Accessing a protected route without being authenticated throw a new TRPCError. This works properlyh on the NextJs app but does not on the Exp app the TRPClient generate an eerror (TBC).
+- **NativeWind is not working in the expo app, so styling is not showing**  
+  This has been reported as an [issue](https://github.com/t3-oss/create-t3-turbo/issues/910) against the original repo and requiring a fix on the NativeWind side.
 
 - **Enabling Edge Runtinme on RSC is throwing a TRPC error**  
-I am facing this issue also with the original repo.
+  I had to remove the use of the edge runtime from the Next App homepage as this cause an exception that I cannot trace down and resolve. This also happens to me on a clean version of the original create-t3-turbo repo.
 
-- **NativeWind is not working in the expo app, so styling is not showing**  
-This is has been also reported against the original repo and requiring a fix on the NativeWind side.
+## Other considerations
+
+- **middleware configuration**
+  `middleware.ts` has been added under `/app/nextjs/src` to manage Clerk authentication and will require updating as you add routes to your app.  
+  In the current setup all the api routes that are not included into `publicRoutes` are not accessible regardless of them being declared as `publicProcedure` in your TRPC router. Non public API requests are rejected by the middleware without executing the user authenication code defined for the TRPC publicProcedure (under `/packlages/api/src/trpc.ts`) so the client never receive the Unauthorized Error thrown in that code.
+
+- **Environment variables**  
+  Clerk publishable key is currently required as environment variable both in the .env in the root directory and in the .env file under /apps/expo. I am sure there's a better way to avoid this being duplicated... :)
+
+---
+
+> What follow is an amended version of the original README from [create-t3-turbo](https://github.com/t3-oss/create-t3-turbo). All credits to the author :)
 
 ## Installation
 
-There are two ways of initializing an app using the `create-t3-turbo` starter. You can either use this repository as a template:
-
-![use-as-template](https://github.com/t3-oss/create-t3-turbo/assets/51714798/bb6c2e5d-d8b6-416e-aeb3-b3e50e2ca994)
+There are two ways of initializing an app using this repo. You can either use this repository as a template, clicking "Use this template" from the repository page.
 
 or use Turbo's CLI to init your project (use PNPM as package manager):
 
-```bash
-npx create-turbo@latest -e https://github.com/t3-oss/create-t3-turbokgit push -u origin maingit push -u origin maingit push -u origin maingit push -u origin maingit push -u origin maingit push -u origin maingit push -u origin maingit push -u origin maingit push -u origin main
-```
+````bash
+npx create-turbo@latest -e https://github.com/Mirthis/create-t3-turbo-clerk-neon
 
 ## About
 
@@ -43,25 +52,22 @@ It uses [Turborepo](https://turborepo.org) and contains:
 .vscode
   └─ Recommended extensions and settings for VSCode users
 apps
-  ├─ auth-proxy
-  |   ├─ Nitro server to proxy OAuth requests in preview deployments
-  |   └─ Uses Auth.js Core
   ├─ expo
   |   ├─ Expo SDK 49
   |   ├─ React Native using React 18
   |   ├─ Navigation using Expo Router
   |   ├─ Tailwind using NativeWind
   |   └─ Typesafe API calls using tRPC
+  |   └─ Authentication using Clerk
   └─ next.js
       ├─ Next.js 14
       ├─ React 18
       ├─ Tailwind CSS
-      └─ E2E Typesafe API Server & Client
+      ├─ E2E Typesafe API Server & Client
+      └─ Authentication using Clerk
 packages
   ├─ api
   |   └─ tRPC v11 router definition
-  ├─ auth
-  |   └─ Authentication using next-auth. **NOTE: Only for Next.js app, not Expo**
   ├─ db
   |   └─ Typesafe db calls using Drizzle & Planetscale
   └─ ui
@@ -75,14 +81,14 @@ tooling
   |   └─ shared tailwind configuration
   └─ typescript
       └─ shared tsconfig you can extend from
-```
+````
 
 > In this template, we use `@acme` as a placeholder for package names. As a user, you might want to replace it with your own organization or project name. You can use find-and-replace to change all the instances of `@acme` to something like `@my-company` or `@project-name`.
 
 ## Quick Start
 
 > **Note**
-> The [db](./packages/db) package is preconfigured to use PlanetScale and is **edge-bound** with the [database.js](https://github.com/planetscale/database-js) driver. If you're using something else, make the necessary modifications to the [schema](./packages/db/src/schema) as well as the [client](./packages/db/src/index.ts) and the [drizzle config](./packages/db/drizzle.config.ts). If you want to switch to non-edge database driver, remove `export const runtime = "edge";` [from all pages and api routes](https://github.com/t3-oss/create-t3-turbo/issues/634#issuecomment-1730240214).
+> The [db](./packages/db) package is preconfigured to use [Neon](https://neon.tech/) and is **edge-bound** with the [Neon Serverless](https://github.com/neondatabase/serverless) driver. If you're using something else, make the necessary modifications to the [schema](./packages/db/src/schema) as well as the [client](./packages/db/src/index.ts) and the [drizzle config](./packages/db/drizzle.config.ts). If you want to switch to non-edge database driver, remove `export const runtime = "edge";` [from all pages and api routes](https://github.com/t3-oss/create-t3-turbo/issues/634#issuecomment-1730240214).
 
 To get it running, follow the steps below:
 
@@ -93,8 +99,9 @@ To get it running, follow the steps below:
 pnpm i
 
 # Configure environment variables
-# There is an `.env.example` in the root directory you can use for reference
+# There is an `.env.example` in the root directory and one in the expo directory that you can use for reference (I need to see how to remove the duplication)
 cp .env.example .env
+cp ./apps/expo/.env.example ./apps/expo/.env
 
 # Push the Drizzle schema to the database
 pnpm db:push
@@ -142,14 +149,6 @@ No. Solito will not be included in this repo. It is a great tool if you want to 
 
 Integrating Solito into this repo isn't hard, and there are a few [official templates](https://github.com/nandorojo/solito/tree/master/example-monorepos) by the creators of Solito that you can use as a reference.
 
-### What auth solution should I use instead of Next-Auth.js for Expo?
-
-I've left this kind of open for you to decide. Some options are [Clerk](https://clerk.dev), [Supabase Auth](https://supabase.com/docs/guides/auth), [Firebase Auth](https://firebase.google.com/docs/auth/) or [Auth0](https://auth0.com/docs). Note that if you're dropping the Expo app for something more "browser-like", you can still use Next-Auth.js for those. [See an example in a Plasmo Chrome Extension here](https://github.com/t3-oss/create-t3-turbo/tree/chrome/apps/chrome).
-
-The Clerk.dev team even made an [official template repository](https://github.com/clerkinc/t3-turbo-and-clerk) integrating Clerk.dev with this repo.
-
-During Launch Week 7, Supabase [announced their fork](https://supabase.com/blog/launch-week-7-community-highlights#t3-turbo-x-supabase) of this repo integrating it with their newly announced auth improvements. You can check it out [here](https://github.com/supabase-community/create-t3-turbo).
-
 ### Does this pattern leak backend code to my client applications?
 
 No, it does not. The `api` package should only be a production dependency in the Next.js application where it's served. The Expo app, and all other apps you may add in the future, should only add the `api` package as a dev dependency. This lets you have full typesafety in your client applications, while keeping your backend code safe.
@@ -174,17 +173,6 @@ Let's deploy the Next.js application to [Vercel](https://vercel.com). If you've 
 2. Add your `DATABASE_URL` environment variable.
 
 3. Done! Your app should successfully deploy. Assign your domain and use that instead of `localhost` for the `url` in the Expo app so that your Expo app can communicate with your backend when you are not in development.
-
-### Auth Proxy
-
-The auth proxy is a Nitro server that proxies OAuth requests in preview deployments. This is required for the Next.js app to be able to authenticate users in preview deployments. The auth proxy is not used for OAuth requests in production deployments. To get it running, it's easiest to use Vercel Edge functions. See the [Nitro docs](https://nitro.unjs.io/deploy/providers/vercel#vercel-edge-functions) for how to deploy Nitro to Vercel.
-
-Then, there are some environment variables you need to set in order to get OAuth working:
-
-- For the Next.js app, set `AUTH_REDIRECT_PROXY_URL` to the URL of the auth proxy.
-- For the auth proxy server, set `AUTH_REDIRECT_PROXY_URL` to the same as above, as well as `AUTH_DISCORD_ID`, `AUTH_DISCORD_SECRET` (or the equivalent for your OAuth provider(s)). Lastly, set `AUTH_SECRET` **to the same value as in the Next.js app** for preview environments.
-
-Read more about the setup in [the auth proxy README](./apps/auth-proxy/README.md).
 
 ### Expo
 
@@ -255,5 +243,3 @@ Deploying your Expo application works slightly differently compared to Next.js o
 ## References
 
 The stack originates from [create-t3-app](https://github.com/t3-oss/create-t3-app).
-
-A [blog post](https://jumr.dev/blog/t3-turbo) where I wrote how to migrate a T3 app into this.

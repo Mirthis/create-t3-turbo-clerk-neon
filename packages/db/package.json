@@ -17,6 +17,7 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.9.0",
     "@planetscale/database": "^1.16.0",
     "drizzle-orm": "^0.29.4",
     "postgres": "^3.3.5"

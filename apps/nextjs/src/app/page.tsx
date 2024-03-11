@@ -1,11 +1,5 @@
 import { Suspense } from "react";
-import {
-  SignedIn,
-  SignedOut,
-  SignIn,
-  SignOutButton,
-  UserButton,
-} from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignIn, UserButton } from "@clerk/nextjs";
 
 import { api } from "~/trpc/server";
 import {
