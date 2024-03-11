@@ -1,10 +1,22 @@
-# create-t3-turbo
+# create-t3-turbo-clerk-neon
 
-> **Note**
-> Due to high demand, this repo now uses the `app` directory with some new experimental features. If you want to use the more traditional `pages` router, [check out the repo before the update](https://github.com/t3-oss/create-t3-turbo/tree/414aff131ca124573e721f3779df3edb64989fd4).
+This is based on [create-t3-turbo](https://github.com/t3-oss/create-t3-turbo) and include the following changes:
 
-> **Note**
-> OAuth deployments are now working for preview deployments. Read [deployment guide](https://github.com/t3-oss/create-t3-turbo#auth-proxy) and [check out the source](./apps/auth-proxy) to learn more!
+- add [Clerk](https://clerk.com/) as authentication provided for both nexxt and expo app
+- Updatge db schema and setup to use [Noen](https://neon.tech/) instead of [PlanetScale](https://planetscale.com/).
+- remove the auth proxy app
+- remove the auth packaged 
+
+## Know issues
+
+- **Unauthorized error not working as expected on the Expo App.**  
+Accessing a protected route without being authenticated throw a new TRPCError. This works properlyh on the NextJs app but does not on the Exp app the TRPClient generate an eerror (TBC).
+
+- **Enabling Edge Runtinme on RSC is throwing a TRPC error**  
+I am facing this issue also with the original repo.
+
+- **NativeWind is not working in the expo app, so styling is not showing**  
+This is has been also reported against the original repo and requiring a fix on the NativeWind side.
 
 ## Installation
 
@@ -15,7 +27,7 @@ There are two ways of initializing an app using the `create-t3-turbo` starter. Y
 or use Turbo's CLI to init your project (use PNPM as package manager):
 
 ```bash
-npx create-turbo@latest -e https://github.com/t3-oss/create-t3-turbo
+npx create-turbo@latest -e https://github.com/t3-oss/create-t3-turbokgit push -u origin maingit push -u origin maingit push -u origin maingit push -u origin maingit push -u origin maingit push -u origin maingit push -u origin maingit push -u origin maingit push -u origin main
 ```
 
 ## About

@@ -90,7 +90,7 @@ export const publicProcedure = t.procedure;
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
+export const protectedProcedure = t.procedure.use(async ({  next }) => {
   console.log("TRPC Protected: ");
   const user = await currentUser();
   if(!user) {
