@@ -10,7 +10,7 @@ export const postRouter = createTRPCRouter({
     // return ctx.db.select().from(schema.post).orderBy(desc(schema.post.id));
     return ctx.db.query.post.findMany({
       orderBy: desc(schema.post.id),
-      limit: 10,  
+      limit: 10,
     });
   }),
 

@@ -1,10 +1,10 @@
 import type { Config } from "drizzle-kit";
 
-const uri = process.env.DATABASE_URL
+const uri = process.env.DATABASE_URL;
 
 export default {
   schema: "./src/schema",
   driver: "pg",
-  dbCredentials: { connectionString: uri ?? ""  },
+  dbCredentials: { connectionString: uri ?? "" },
   tablesFilter: ["t3turbo_*"],
 } satisfies Config;
