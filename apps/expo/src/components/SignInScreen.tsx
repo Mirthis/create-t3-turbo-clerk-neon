@@ -22,6 +22,7 @@ export default function SignInScreen() {
       // This indicates the user is signed in
       await setActive({ session: completeSignIn.createdSessionId });
     } catch (err: unknown) {
+      console.log("Failed to sign in");
       console.log(err);
     }
   };

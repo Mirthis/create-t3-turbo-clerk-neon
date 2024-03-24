@@ -126,22 +126,22 @@ export default function Index() {
     onSettled: () => utils.post.all.invalidate().then(),
   });
 
+  console.log(postQuery.data);
+
   return (
     <SafeAreaView className=" bg-background">
-      <SignedIn>
-        <Text>You are Signed in</Text>
-        <SignOut />
-      </SignedIn>
-      <SignedOut>
-        <View>
-          <Text>You are Signed out</Text>
-          <SignInScreen />
-        </View>
-      </SignedOut>
-
       {/* Changes page title visible on the header */}
       <Stack.Screen options={{ title: "Home Page" }} />
-      <View className="h-full w-full bg-background p-4">
+      <View className="h-full w-full gap-y-4 bg-background p-4">
+        <SignedIn>
+          <SignOut />
+        </SignedIn>
+        <SignedOut>
+          <View>
+            <SignInScreen />
+          </View>
+        </SignedOut>
+
         <Text className="pb-2 text-center text-5xl font-bold text-foreground">
           Create <Text className="text-primary">T3</Text> Turbo
         </Text>

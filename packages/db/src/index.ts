@@ -1,6 +1,8 @@
 // Neon DB
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { neon, neonConfig, Pool } from "@neondatabase/serverless";
+import { drizzle as drizzleHttp } from "drizzle-orm/neon-http";
+// import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle as drizzleServerless } from "drizzle-orm/neon-serverless";
 
 // Standard Postgres (i.e.: local development)
 // import { drizzle } from "drizzle-orm/postgres-js";
@@ -10,11 +12,34 @@ import * as post from "./schema/post";
 
 export const schema = { ...post };
 
-// Neon DB
-export const db = drizzle(neon(process.env.DATABASE_URL!), { schema });
+const connectionString = process.env.DATABASE_URL;
+neonConfig.fetchConnectionCache = true;
 
-// Standard Postgres (i.e.: local development)
-// export const db = drizzle(postgres(process.env.DATABASE_URL!), { schema });
+if (!connectionString) {
+  throw new Error("DATABASE_URL is not set");
+}
+
+let db = null;
+
+if (process.env.USE_LOCAL_DB) {
+  console.log("====== Using local DB ======");
+  // Set the WebSocket proxy to work with the local instance
+  neonConfig.wsProxy = (host) => `${host}:5433/v1`;
+  // Disable all authentication and encryption
+  neonConfig.useSecureWebSocket = false;
+  neonConfig.pipelineTLS = false;
+  neonConfig.pipelineConnect = false;
+
+  const pool = new Pool({
+    connectionString,
+  });
+
+  db = drizzleServerless(pool, { schema });
+} else {
+  db = drizzleHttp(neon(connectionString), { schema });
+}
+
+export { db };
 
 export { pgTable as tableCreator } from "./schema/_table";
 
