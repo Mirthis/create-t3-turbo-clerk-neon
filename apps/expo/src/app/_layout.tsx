@@ -53,6 +53,7 @@ export default function RootLayout() {
             },
           }}
         />
+
         <StatusBar />
       </TRPCProvider>
     </ClerkProvider>

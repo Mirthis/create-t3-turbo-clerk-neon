@@ -11,9 +11,6 @@ Following changes have been made:
 
 ## Know issues
 
-- **NativeWind is not working in the expo app, so styling is not showing**  
-  This has been reported as an [issue](https://github.com/t3-oss/create-t3-turbo/issues/910) against the original repo and requiring a fix on the NativeWind side.
-
 - **Enabling Edge Runtinme on RSC is throwing a TRPC error**  
   I had to remove the use of the edge runtime from the Next App homepage as this cause an exception that I cannot trace down and resolve. This also happens to me on a clean version of the original create-t3-turbo repo.
 
@@ -26,11 +23,14 @@ Following changes have been made:
 - **Environment variables**  
   Clerk publishable key is currently required as environment variable both in the .env in the root directory and in the .env file under /apps/expo. I am sure there's a better way to avoid this being duplicated... :)
 
----
-
-> What follow is an amended version of the original README from [create-t3-turbo](https://github.com/t3-oss/create-t3-turbo). All credits to the author :)
+- **Local development**
+  To allow development with a local database without having to change the db drivers is possible to use a proxy provided by Neon that can be spawn up, together with a PostgreSQL instance via docker using the `docker-compose.yaml` file now included in the repo.
+  A possible drawback with this approach is that it requires to use the Neon serverless drivers instead of the HTTP drivers, that I think may have different performances based on the use case.  
+  I've tried to have both options but as the drizzle object returned is different, that creates some challenges when it comes to typing.
 
 ## Installation
+
+> What follow is an amended version of the original README from [create-t3-turbo](https://github.com/t3-oss/create-t3-turbo). All credits to the author :)
 
 There are two ways of initializing an app using this repo. You can either use this repository as a template, clicking "Use this template" from the repository page.
 

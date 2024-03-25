@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { Alert, Button, Pressable, Text, TextInput, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Alert, Pressable, Text, TextInput, View } from "react-native";
 import { Link, Stack } from "expo-router";
-import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut, useAuth, useUser } from "@clerk/clerk-expo";
 import { FlashList } from "@shopify/flash-list";
 
 import type { RouterOutputs } from "~/utils/api";
-import SignInScreen from "~/components/SignInScreen";
 import { api } from "~/utils/api";
 
 function PostCard(props: {
@@ -107,12 +105,57 @@ const SignOut = () => {
   }
   return (
     <View>
-      <Button
-        title="Sign Out"
+      <Pressable
+        className="flex items-center rounded-lg border border-primary bg-transparent p-2 text-primary"
         onPress={async () => {
           await signOut();
         }}
-      />
+      >
+        <Text className="text-primary">Sign out</Text>
+      </Pressable>
+    </View>
+  );
+};
+
+const SignInUpOut = () => {
+  const { user } = useUser();
+  const userEmail = user?.primaryEmailAddress?.emailAddress;
+
+  return (
+    <View className="items-center justify-center gap-y-2 py-4">
+      <SignedIn>
+        <Text className=" text-xl font-semibold">You are logged in</Text>
+        <SignOut />
+      </SignedIn>
+      <SignedOut>
+        <Text className="text-xl font-semibold">
+          You are not logged in as {userEmail}
+        </Text>
+        <View className="w-full flex-row gap-x-4">
+          <Link
+            asChild
+            className="flex-1"
+            href={{
+              pathname: "/sign-up/",
+            }}
+          >
+            <Pressable className="flex items-center rounded-lg bg-primary p-2">
+              <Text className="text-primary-foreground">Sign-up</Text>
+            </Pressable>
+          </Link>
+          <Link
+            asChild
+            className="flex-1"
+            href={{
+              pathname: "/sign-in/",
+            }}
+          >
+            <Pressable className="flex items-center rounded-lg border border-primary bg-transparent p-2">
+              <Text className="text-primary">Sign-in</Text>
+            </Pressable>
+          </Link>
+        </View>
+      </SignedOut>
     </View>
   );
 };
@@ -120,27 +163,18 @@ const SignOut = () => {
 export default function Index() {
   const utils = api.useUtils();
 
-  const postQuery = api.post.all.useQuery();
+  const { data } = api.post.all.useQuery();
 
   const deletePostMutation = api.post.delete.useMutation({
     onSettled: () => utils.post.all.invalidate().then(),
   });
 
-  console.log(postQuery.data);
-
   return (
-    <SafeAreaView className=" bg-background">
+    <View className=" bg-background">
       {/* Changes page title visible on the header */}
       <Stack.Screen options={{ title: "Home Page" }} />
-      <View className="h-full w-full gap-y-4 bg-background p-4">
-        <SignedIn>
-          <SignOut />
-        </SignedIn>
-        <SignedOut>
-          <View>
-            <SignInScreen />
-          </View>
-        </SignedOut>
+      <View className="h-full w-full bg-background px-4">
+        <SignInUpOut />
 
         <Text className="pb-2 text-center text-5xl font-bold text-foreground">
           Create <Text className="text-primary">T3</Text> Turbo
@@ -160,7 +194,7 @@ export default function Index() {
         </View>
 
         <FlashList
-          data={postQuery.data}
+          data={data}
           estimatedItemSize={20}
           ItemSeparatorComponent={() => <View className="h-2" />}
           renderItem={(p) => (
@@ -173,6 +207,6 @@ export default function Index() {
 
         <CreatePost />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
